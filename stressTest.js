@@ -1,10 +1,10 @@
 const startButton = document.getElementById('startButton');
 const stopButton = document.getElementById('stopButton');
-const numThreads = navigator.hardwareConcurrency || 4;
+const numCoresInput = document.getElementById('numCores');
 const workers = [];
 
 function createWorker() {
-  const worker = new Worker('worker.js');
+  const worker = new Worker('https://stappmus.github.io/Stress-test/worker.js');
   worker.onmessage = (event) => {
     if (event.data === 'stopped') {
       const index = workers.indexOf(worker);
@@ -23,7 +23,8 @@ function createWorker() {
 startButton.addEventListener('click', () => {
   startButton.disabled = true;
   stopButton.disabled = false;
-  for (let i = 0; i < numThreads; i++) {
+  const numCores = parseInt(numCoresInput.value, 10) || 1;
+  for (let i = 0; i < numCores; i++) {
     const worker = createWorker();
     workers.push(worker);
     worker.postMessage('start');
