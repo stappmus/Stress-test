@@ -3,8 +3,17 @@ const stopButton = document.getElementById('stopButton');
 const numCoresInput = document.getElementById('numCores');
 const workers = [];
 
-function createWorker() {
-  const worker = new Worker('https://stappmus.github.io/Stress-test/worker.js');
+async function fetchWorkerScript() {
+  const response = await fetch('https://stappmus.github.io/Stress-test/worker.js');
+  const script = await response.text();
+  return script;
+}
+
+async function createWorker() {
+  const workerScript = await fetchWorkerScript();
+  const blob = new Blob([workerScript], { type: 'text/javascript' });
+  const workerUrl = URL.createObjectURL(blob);
+  const worker = new Worker(workerUrl);
   worker.onmessage = (event) => {
     if (event.data === 'stopped') {
       const index = workers.indexOf(worker);
@@ -20,12 +29,12 @@ function createWorker() {
   return worker;
 }
 
-startButton.addEventListener('click', () => {
+startButton.addEventListener('click', async () => {
   startButton.disabled = true;
   stopButton.disabled = false;
   const numCores = parseInt(numCoresInput.value, 10) || 1;
   for (let i = 0; i < numCores; i++) {
-    const worker = createWorker();
+    const worker = await createWorker();
     workers.push(worker);
     worker.postMessage('start');
   }
