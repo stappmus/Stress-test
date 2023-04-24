@@ -4,7 +4,7 @@ import { RenderPass } from 'https://threejs.org/examples/jsm/postprocessing/Rend
 import { ShaderPass } from 'https://threejs.org/examples/jsm/postprocessing/ShaderPass.js';
 import { SSAOPass } from 'https://threejs.org/examples/jsm/postprocessing/SSAOPass.js';
 import { SMAAPass } from 'https://threejs.org/examples/jsm/postprocessing/SMAAPass.js';
-import '../path/to/SSAOShader.js';
+import  {SSAOShader } from 'https://threejs.org/examples/jsm/shaders/SSAOShader.js';
 
     const startButton = document.getElementById('startButton');
     const stopButton = document.getElementById('stopButton');
