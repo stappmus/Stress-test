@@ -3,10 +3,34 @@ const stopButton = document.getElementById('stopButton');
 const numCoresInput = document.getElementById('numCores');
 const workers = [];
 
-const workerScriptBase64 = bGV0IHJ1bm5pbmcgPSBmYWxzZTsKCmZ1bmN0aW9uIHN0cmVzc1Rlc3QoKSB7CiAgaWYgKCFydW5uaW5nKSB7CiAgICByZXR1cm47CiAgfQogIGxldCBpID0gMDsKICB3aGlsZSAoaSA8IDEwMDAwMDAwMDApIHsKICAgIGkrKzsKICB9CiAgc2V0VGltZW91dChzdHJlc3NUZXN0LCAwKTsKfQoKc2VsZi5vbm1lc3NhZ2UgPSAoZXZlbnQpID0+IHsKICBpZiAoZXZlbnQuZGF0YSA9PT0gJ3N0YXJ0JykgewogICAgcnVubmluZyA9IHRydWU7CiAgICBzdHJlc3NUZXN0KCk7CiAgfSBlbHNlIGlmIChldmVudC5kYXRhID09PSAnc3RvcCcpIHsKICAgIHJ1bm5pbmcgPSBmYWxzZTsKICAgIHNlbGYucG9zdE1lc3NhZ2UoJ3N0b3BwZWQnKTsKICB9Cn07;
+const workerScript = `
+let running = false;
+
+function stressTest() {
+  if (!running) {
+    return;
+  }
+  let i = 0;
+  while (i < 10000000000) {
+    i++;
+  }
+  setTimeout(stressTest, 0);
+}
+
+self.onmessage = (event) => {
+  if (event.data === 'start') {
+    running = true;
+    stressTest();
+  } else if (event.data === 'stop') {
+    running = false;
+    self.postMessage('stopped');
+  }
+};
+`;
 
 function createWorker() {
-  const workerUrl = `data:text/javascript;base64,${workerScriptBase64}`;
+  const workerBlob = new Blob([workerScript], { type: 'application/javascript' });
+  const workerUrl = URL.createObjectURL(workerBlob);
   const worker = new Worker(workerUrl);
   worker.onmessage = (event) => {
     if (event.data === 'stopped') {
