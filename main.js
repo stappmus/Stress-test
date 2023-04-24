@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
 import { EffectComposer } from 'https://threejs.org/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'https://threejs.org/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'https://threejs.org/examples/jsm/postprocessing/ShaderPass.js';
