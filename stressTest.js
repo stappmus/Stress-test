@@ -32,6 +32,5 @@ startButton.addEventListener('click', () => {
 });
 
 stopButton.addEventListener('click', () => {
-  stopButton.disabled = true;
   workers.forEach((worker) => worker.postMessage('stop'));
 });
