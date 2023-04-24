@@ -3,16 +3,10 @@ const stopButton = document.getElementById('stopButton');
 const numCoresInput = document.getElementById('numCores');
 const workers = [];
 
-async function fetchWorkerScript() {
-  const response = await fetch('https://stappmus.github.io/Stress-test/worker.js');
-  const script = await response.text();
-  return script;
-}
+const workerScriptBase64 = bGV0IHJ1bm5pbmcgPSBmYWxzZTsKCmZ1bmN0aW9uIHN0cmVzc1Rlc3QoKSB7CiAgaWYgKCFydW5uaW5nKSB7CiAgICByZXR1cm47CiAgfQogIGxldCBpID0gMDsKICB3aGlsZSAoaSA8IDEwMDAwMDAwMDApIHsKICAgIGkrKzsKICB9CiAgc2V0VGltZW91dChzdHJlc3NUZXN0LCAwKTsKfQoKc2VsZi5vbm1lc3NhZ2UgPSAoZXZlbnQpID0+IHsKICBpZiAoZXZlbnQuZGF0YSA9PT0gJ3N0YXJ0JykgewogICAgcnVubmluZyA9IHRydWU7CiAgICBzdHJlc3NUZXN0KCk7CiAgfSBlbHNlIGlmIChldmVudC5kYXRhID09PSAnc3RvcCcpIHsKICAgIHJ1bm5pbmcgPSBmYWxzZTsKICAgIHNlbGYucG9zdE1lc3NhZ2UoJ3N0b3BwZWQnKTsKICB9Cn07;
 
-async function createWorker() {
-  const workerScript = await fetchWorkerScript();
-  const blob = new Blob([workerScript], { type: 'text/javascript' });
-  const workerUrl = URL.createObjectURL(blob);
+function createWorker() {
+  const workerUrl = `data:text/javascript;base64,${workerScriptBase64}`;
   const worker = new Worker(workerUrl);
   worker.onmessage = (event) => {
     if (event.data === 'stopped') {
@@ -29,12 +23,12 @@ async function createWorker() {
   return worker;
 }
 
-startButton.addEventListener('click', async () => {
+startButton.addEventListener('click', () => {
   startButton.disabled = true;
   stopButton.disabled = false;
   const numCores = parseInt(numCoresInput.value, 10) || 1;
   for (let i = 0; i < numCores; i++) {
-    const worker = await createWorker();
+    const worker = createWorker();
     workers.push(worker);
     worker.postMessage('start');
   }
